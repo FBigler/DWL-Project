@@ -2,6 +2,7 @@ import json
 import os
 import io
 import psycopg2
+import psycopg2.extras as extras
 import pandas as pd
 import geopandas as gpd
 import requests
@@ -19,19 +20,23 @@ dict_subcat = {'subcat_1': 'Hydroelectric power', 'subcat_2': 'Photovoltaic', 's
                'subcat_7': 'Crude oil', 'subcat_8': 'Natural gas', 'subcat_9': 'Coal', 'subcat_10': 'Waste'}
 
 
-# Function to create list of datatypes for PostgreSQL
-def getColumnDtypes(dataTypes):
-    dataList = []
-    for x in dataTypes:
-        if (x == 'int64'):
-            dataList.append('int')
-        elif (x == 'float64'):
-            dataList.append('float')
-        elif (x == 'bool'):
-            dataList.append('boolean')
-        else:
-            dataList.append('varchar')
-    return dataList
+# Inserting dataframe into database
+def execute_values(conn, df, table):
+    tuples = [tuple(x) for x in df.to_numpy()]
+    cols = ','.join(list(df.columns))
+    # SQL query to execute
+    query = "INSERT INTO %s(%s) VALUES %%s" % (table, cols)
+    cur = conn.cursor()
+    try:
+        extras.execute_values(cur, query, tuples)
+        conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        conn.rollback()
+        cur.close()
+        return 1
+    print("the dataframe is inserted")
+    cur.close()
 
 
 def lambda_handler(event, context):
@@ -106,16 +111,7 @@ def lambda_handler(event, context):
         raise SystemExit(e)
 
     try:
-        # Prepare import to PostgreSQL
-        columnName = list(df_essential.columns.values)
-        columnDataType = getColumnDtypes(df_essential.dtypes)
-        # Create table statement
-        createTableStatement = 'CREATE TABLE IF NOT EXISTS ElectricityProductionPlants ('
-        for i in range(len(columnDataType)):
-            createTableStatement = createTableStatement + '\n' + columnName[i] + ' ' + columnDataType[i] + ','
-        createTableStatement = createTableStatement[:-1] + ' );'
-        # Create table
-        cur.execute(createTableStatement)
+        execute_values(conn, df_essential, 'ElectricityProductionPlants')
     except psycopg2.Error as e:
         print("Error: Creating Table")
         print(e)
