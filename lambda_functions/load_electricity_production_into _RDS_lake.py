@@ -8,16 +8,19 @@ import geopandas as gpd
 import requests
 import numpy as np
 import zipfile
-import config_dbdynamic as creds
+import config_lake as creds
 import boto3
 
 # Dictionary for mapping of dataframe
-dict_maincat = {'maincat_1': 'Hydroelectric power', 'maincat_2': 'Other renewable energies',
-                'maincat_3': 'Nuclear energy', 'maincat_4': 'Fossil fuel'}
+dict_maincat = {'maincat_1': 'Hydroelectric power',
+                'maincat_2': 'Other renewable energies', 'maincat_3': 'Nuclear energy',
+                'maincat_4': 'Fossil fuel'}
 
-dict_subcat = {'subcat_1': 'Hydroelectric power', 'subcat_2': 'Photovoltaic', 'subcat_3': 'Wind energy',
-               'subcat_4': 'Biomass', 'subcat_5': 'Geothermal energy', 'subcat_6': 'Nuclear energy',
-               'subcat_7': 'Crude oil', 'subcat_8': 'Natural gas', 'subcat_9': 'Coal', 'subcat_10': 'Waste'}
+dict_subcat = {'subcat_1': 'Hydroelectric power', 'subcat_2': 'Photovoltaic',
+               'subcat_3': 'Wind energy', 'subcat_4': 'Biomass',
+               'subcat_5': 'Geothermal energy', 'subcat_6': 'Nuclear energy',
+               'subcat_7': 'Crude oil', 'subcat_8': 'Natural gas', 'subcat_9': 'Coal',
+               'subcat_10': 'Waste'}
 
 
 # Inserting dataframe into database
@@ -28,6 +31,10 @@ def execute_values(conn, df, table):
     query = "INSERT INTO %s(%s) VALUES %%s" % (table, cols)
     cur = conn.cursor()
     try:
+        cur.execute("CREATE TABLE IF NOT EXISTS ElectricityProductionPlants \
+        (xtf_id int, PostCode int, Municipality varchar, Canton varchar, \
+        BeginningOfOperation int, MainCategory varchar, SubCategory varchar, \
+        InitialPower float, TotalPower float);")  # create
         extras.execute_values(cur, query, tuples)
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -42,8 +49,8 @@ def execute_values(conn, df, table):
 def lambda_handler(event, context):
     try:
         # Set up a connection to the postgres server.
-        conn_string = "host=" + creds.PGHOST + " port=" + "5432" + " dbname=" + creds.PGDATABASE + " user=" + creds.PGUSER \
-                      + " password=" + creds.PGPASSWORD
+        conn_string = "host=" + creds.PGHOST + " port=" + "5432" + " dbname=" + \
+                      creds.PGDATABASE + " user=" + creds.PGUSER + " password=" + creds.PGPASSWORD
 
         conn = psycopg2.connect(conn_string)
         print("Connected!")
@@ -102,9 +109,9 @@ def lambda_handler(event, context):
         # Extracting year of beginning of operation / Change it back to int
         df_mapped['BeginningOfOperation'] = df['BeginningOfOperation'].str[0:4]
         df_mapped['BeginningOfOperation'] = df_mapped['BeginningOfOperation'].values.astype(int)
-        df_essential = df_mapped[
-            ['xtf_id', 'PostCode', 'Municipality', 'Canton', 'BeginningOfOperation', 'MainCategory', 'SubCategory',
-             'InitialPower', 'TotalPower']]
+        df_essential = df_mapped[['xtf_id', 'PostCode', 'Municipality', 'Canton', \
+                                  'BeginningOfOperation', 'MainCategory', 'SubCategory',
+                                  'InitialPower', 'TotalPower']]
         print('df_essential created')
 
     except requests.exceptions.RequestException as e:
@@ -136,4 +143,3 @@ def lambda_handler(event, context):
 
     cur.close()
     conn.close()
-
