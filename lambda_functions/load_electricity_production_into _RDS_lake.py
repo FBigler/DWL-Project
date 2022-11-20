@@ -143,3 +143,4 @@ def lambda_handler(event, context):
 
     cur.close()
     conn.close()
+
