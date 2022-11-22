@@ -18,7 +18,8 @@ def execute_values(conn, df, table):
         cur.execute("CREATE TABLE IF NOT EXISTS MeasuringPointsCoordinates \
         (Nr int, Status_BGDI int, Measuring_Point varchar, \
         Canton varchar, Street varchar, Coordinate_East int, \
-        Coordinate_Nord int);")  # create
+        Coordinate_Nord int, Status varchar, Type_Measuring_Point varchar, \
+        Number_of_lanes int);")  # create
         extras.execute_values(cur, query, tuples)
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -57,14 +58,14 @@ def lambda_handler(event, context):
     s3_client = boto3.client('s3')
     s3_bucket_name = 'electricbucket'
     s3 = boto3.resource('s3',
-                        aws_access_key_id='ASIAWGCGFD37AOGGODRE',
-                        aws_secret_access_key='etd3epsKezyB1568g8CpbxsB6QDD1yasSGHPWb9O',
-                        aws_session_token='FwoGZXIvYXdzEID//////////wEaDFEwGx8qiW4vMDAaly\
-                        K2ASdvYMq4EwAzeT4pU364iL8PgbSbEKT60Ik4glk5Dph4J6Wd+vBqZDBvVHookwL\
-                        RjK6vf0/c+QU7tuzLkJyMkQHXAfaJQD8QgJCixk6yFM9lpPXu9Jh8SkvFVr1dVNL1\
-                        E+gJ1VRoQjqXmXteo8k8t4uxXXJ19JYSQFlwsBfBiDOGjGEVo6RErnvpLNQqCHVAc\
-                        Ix9Pw5yu/K7DZjMFDllyFNTTpHu9QylFD6x21UlRtr6nVZS20c7KJf56JsGMi1Tdh\
-                        vEgfXGDS2zK928R22NxlmjZkLY+s3xHcXREzUxiH0Goe34lvlhF91jQY0=')
+                        aws_access_key_id='ASIAWGCGFD37GHUUWS5R',
+                        aws_secret_access_key='CKg4nXkXpauLmCy9K8EC9FF6p6tTo43rHWuXQm8U',
+                        aws_session_token='FwoGZXIvYXdzELX//////////wEaDM7OLIvyk10aL+7Y0y\
+                        K2AW65B5LT6v85nFxH/Ia3LedLBNOpXd3eiyPah42XPC6dh7PfPJ+r/KL4bd6m368\
+                        ukxmURIT9ssJSBPyKipVyJK5Vo3K/lElp5ztgXNISdrP1IcTc8+TKIooa3N2lIGEl\
+                        dau38LyWtvWghyxH+TxoyBKgwNxAfPwz/mNcJVHpxjjfFTughXcLi/Ad6R4KUDt6R\
+                        mYDgHUZrhkYmpP7LejqU40UuXDuJbhLs/6A4VCsTz9jBpVXPC1sKObH9JsGMi06CT\
+                        kz1H3kDoBxrbecPvU80WfpHQ1pihCCTaEqvWixVjZAEE9MpvLhMq0EyKQ=')
 
     my_bucket = s3.Bucket(s3_bucket_name)
 
@@ -85,12 +86,17 @@ def lambda_handler(event, context):
 
     # Extract need columns
     df_coordinates = df[['Nr', 'Status_BGDI', 'Zaehlstellen_Bezeichnung', 'Kanton', 'Strasse',
-                         'Koordinate_Ost', 'Koordinate_Nord']]
+                         'Koordinate_Ost', 'Koordinate_Nord', 'Status', 'Messstellentyp',
+                         'Anzahl_Fahrstreifen_Tot']]
 
     # Rename columns
     df_coordinates.rename(columns={'Zaehlstellen_Bezeichnung': 'Measuring_Point', \
                                    'Kanton': 'Canton', 'Strasse': 'Street', 'Koordinate_Ost': 'Coordinate_East', \
-                                   'Koordinate_Nord': 'Coordinate_Nord'}, inplace=True)
+                                   'Koordinate_Nord': 'Coordinate_Nord', 'Messstellentyp': 'Type_Measuring_Point', \
+                                   'Anzahl_Fahrstreifen_Tot': 'Number_of_lanes'}, inplace=True)
+
+    for col in df_coordinates.columns:
+        print(col)
 
     print(df_coordinates.head())
 
