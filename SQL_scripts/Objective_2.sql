@@ -1,49 +1,8 @@
--- extreme values --
+-- Objective 2 - Understanding the rate of occupancy of the charging stations based on its location
 
-SELECT id, evse_id, day_occupancy, day_kwh, day_cars, "date"
-FROM public.charging_stations_occupancy_day
-where day_kwh > 1500;
+-- per canton
 
-SELECT id, evse_id, day_occupancy, day_kwh, day_cars, "date"
-FROM public.charging_stations_occupancy_day
-where day_cars > 10;
-
--- daily average occupancy rate per station over full period
-
-create view daily_average_charging_stations_occupancy
-as 
-with 
-cteDay as (
-select evse_id, 
-avg(day_occupancy) as avg_occupancy,
-avg(day_kwh) as avg_kwh,
-avg(day_cars) as avg_cars
-from public.charging_stations_occupancy_day
-group by evse_id),
-cteStatic as (
-select evse_id, charging_station_id
-from public.charging_stations_static)
-select 
-round(sum(cteDay.avg_occupancy)) as avg_occupancy,
-round(sum(cteDay.avg_kwh)) as avg_kwh,
-round(sum(cteDay.avg_cars)) as avg_cars,
-round(sum(cteDay.avg_occupancy)/sum(cteDay.avg_cars)) as avg_occupancy_per_car,
-round(sum(cteDay.avg_kwh)/sum(cteDay.avg_cars)) as avg_kwh_per_car,
-cteStatic.charging_station_id,
-coordinate_east as latitude, 
-coordinate_nord as longitude
-from cteDay 
-left join cteStatic 
-on cteDay.evse_id = cteStatic.evse_id
-left join chargin_stations_location csl 
-on cteStatic.charging_station_id = csl.charging_station_id 
-group by cteStatic.charging_station_id, longitude, latitude
-order by avg_kwh desc;
-
-
--- sum occupancy over full period
-
-create view sum_charging_stations_occupancy
+create view canton_sum_charging_stations_occupancy
 as 
 with 
 cteDay as (
@@ -54,42 +13,69 @@ sum(day_cars) as sum_cars
 from public.charging_stations_occupancy_day
 group by evse_id),
 cteStatic as (
-select evse_id, charging_station_id
-from public.charging_stations_static)
+select evse_id, charging_station_id, id_postal_code
+from public.charging_stations_static),
+cteCantons as (
+select id_postal_code, canton_abbreviation
+from postal_codes pc)
 select 
 round(sum(cteDay.sum_occupancy)) as sum_occupancy,
 round(sum(cteDay.sum_kwh)) as sum_kwh,
 round(sum(cteDay.sum_cars)) as sum_cars,
 round(sum(cteDay.sum_occupancy)/sum(cteDay.sum_cars)) as avg_occupancy_per_car,
 round(sum(cteDay.sum_kwh)/sum(cteDay.sum_cars)) as avg_kwh_per_car,
-cteStatic.charging_station_id,
-coordinate_east as latitude, 
-coordinate_nord as longitude
+cteCantons.canton_abbreviation
 from cteDay 
 left join cteStatic 
 on cteDay.evse_id = cteStatic.evse_id
-left join chargin_stations_location csl 
-on cteStatic.charging_station_id = csl.charging_station_id 
-group by cteStatic.charging_station_id, longitude, latitude
+left join cteCantons
+on cteStatic.id_postal_code = cteCantons.id_postal_code
+group by cteCantons.canton_abbreviation
 order by sum_kwh desc;
 
 
--- Checking averages / sum
--- DB
+-- per region
 
+create view region_sum_charging_stations_occupancy
+as 
 with 
 cteDay as (
 select evse_id, 
-avg(day_occupancy) as avg_occupancy,
-avg(day_kwh) as avg_kwh,
-avg(day_cars) as avg_cars
+sum(day_occupancy) as sum_occupancy,
+sum(day_kwh) as sum_kwh,
+sum(day_cars) as sum_cars
 from public.charging_stations_occupancy_day
-group by evse_id)
+group by evse_id),
+cteStatic as (
+select evse_id, charging_station_id, id_postal_code
+from public.charging_stations_static),
+cteCantons as (
+select id_postal_code, canton_abbreviation
+from postal_codes pc),
+cteRegions as (
+select canton_abbreviation, region_name
+from regions_and_cantons rac)
 select 
-round(sum(cteDay.avg_occupancy)) as sum_occupancy,
-round(sum(cteDay.avg_kwh)) as sum_kwh,
-round(sum(cteDay.avg_cars)) as sum_cars
-from cteDay;
+round(sum(cteDay.sum_occupancy)) as sum_occupancy,
+round(sum(cteDay.sum_kwh)) as sum_kwh,
+round(sum(cteDay.sum_cars)) as sum_cars,
+round(sum(cteDay.sum_occupancy)/sum(cteDay.sum_cars)) as avg_occupancy_per_car,
+round(sum(cteDay.sum_kwh)/sum(cteDay.sum_cars)) as avg_kwh_per_car,
+cteRegions.region_name
+from cteDay 
+left join cteStatic 
+on cteDay.evse_id = cteStatic.evse_id
+left join cteCantons
+on cteStatic.id_postal_code = cteCantons.id_postal_code
+left join cteRegions
+on cteCantons.canton_abbreviation = cteRegions.canton_abbreviation
+group by cteRegions.region_name
+order by sum_kwh desc;
+
+
+
+-- Checking sums cantons
+-- DB
 
 with 
 cteDay as (
@@ -105,14 +91,13 @@ round(sum(cteDay.sum_kwh)) as sum_kwh,
 round(sum(cteDay.sum_cars)) as sum_cars
 from cteDay;
 
-
--- view daily_average_charging_stations_occupancy 
-
-select sum(avg_occupancy), sum(avg_kwh), sum(avg_cars)
-from daily_average_charging_stations_occupancy dacso 
-
--- view sum_charging_stations_occupancy 
+-- Views
+-- view canton_sum_charging_stations_occupancy 
 
 select sum(sum_occupancy), sum(sum_kwh), sum(sum_cars)
-from sum_charging_stations_occupancy scso  
+from canton_sum_charging_stations_occupancy cscso  
 
+-- view region_sum_charging_stations_occupancy 
+
+select sum(sum_occupancy), sum(sum_kwh), sum(sum_cars)
+from region_sum_charging_stations_occupancy rscso 

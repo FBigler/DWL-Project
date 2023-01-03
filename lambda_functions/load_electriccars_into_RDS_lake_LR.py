@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     DB_LOGIN = {
         "db_host": os.environ['DB_HOST'],
         "db_name": os.environ['DB_NAME'],
-        "db_port": os.environ['DB_PORT'],
+        "d-b_port": os.environ['DB_PORT'],
         "db_user": os.environ['DB_USER'],
         "db_pw": os.environ['DB_PW']
     }
