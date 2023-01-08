@@ -11,7 +11,7 @@ Project of the module "Data Warehouse and Data Lake Systems" within the program 
  
 In this semster project, we would like to take a closer look at the current infrastructure and utilization of charging stations in Switzerland. In doing so, we will determine the existing potential for the expansion of further charging stations by canton and regions of Switzerland for a potential charging station provider.
 
-For this reason an automated data pipline shall be established inside the AWS cloud, setting up a data lake and data warhouse architecture.
+For this reason an automated data pipline shall be established inside the AWS cloud, setting up a data lake and data warhouse architecture. The final results shall then be visualized via a tableau dashboard.
 
  # Project Goals
  
