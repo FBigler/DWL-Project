@@ -33,20 +33,15 @@ For detailed information in regard to the files contained in the specific folder
 
 ## Lambda functions
 
-├── lambda_functions
-│   ├── xxxx
-│   ├── xxx.py
-│   ├── sxxx.py
-│   ├── xxx.py
-│   └── xxx.py
-
-
+This folder contains all the lambda functions which have been used to develop the data piplines inside the AWS cloud. A detailed description  can be found in the final project report.
 
 ## Jupyter notebooks
 
+This folder contains all the jupyter notebooks which where used to explore the data, ingest data into the warehouse for certain data sources as well as setting up die schema of the RDS inside the warehouse.
 
 ## SQL scripts
 
+.
 
 ## References
 
