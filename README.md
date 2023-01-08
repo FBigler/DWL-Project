@@ -1,4 +1,4 @@
-# DWL – Projectname
+# DWL – Enabeling eMobility
 Project of the module "Data Warehouse and Data Lake Systems" within the program MSc. Applied Information and Data Science at the Lucerne University of Applied Sciences and Arts (HSLU).
  
  The members of this project work are as follows:
@@ -9,10 +9,18 @@ Project of the module "Data Warehouse and Data Lake Systems" within the program 
  
  # Project Description
  
+In this semster project, we would like to take a closer look at the current infrastructure and utilization of charging stations in Switzerland. In doing so, we will determine the existing potential for the expansion of further charging stations by canton and regions of Switzerland for a potential charging station provider.
 
- 
+For this reason an automated data pipline shall be established inside the AWS cloud, setting up a data lake and data warhouse architecture. The final results shall then be visualized via a tableau dashboard.
+
  # Project Goals
  
+ Follwoing key questions shall be answered in this work:
+ 
+ * What is the current occupancy rate of the charging stations by canton/region?
+ * How high is the estimated average share of renewable energies in comparison to the estimated energy consumption at charging stations?
+ *	How good is the distribution of charging stations compared to the number of electric cars by canton/region?
+
  
  # Repository Structure
  
@@ -21,18 +29,24 @@ Project of the module "Data Warehouse and Data Lake Systems" within the program 
  1. Lambda functions
  2. Jupyter notebooks
  3. SQL scripts
+ 4. References (if available in PDF format)
 
 For detailed information in regard to the files contained in the specific folder, please consult the documentation below.
 
 ## Lambda functions
 
-
+This folder contains all the lambda functions which have been used to develop the data piplines inside the AWS cloud. A detailed description  can be found in the final project report.
 
 ## Jupyter notebooks
 
+This folder contains all the jupyter notebooks which where used to explore the data, ingest data into the warehouse for certain data sources as well as setting up die schema of the RDS inside the warehouse.
 
 ## SQL scripts
 
+This folder contains the SQL statements for answering the business questions. With this statements view tables are generated inside the RDS and can be accessed directly with tableau.
 
-## References
+## How to run this repository
+
+The lambda functions run entirely on an AWS account. If you wan't to run this code and run the data pipelines copy it into your own lambda function inside your AWS environment. You need to set up an lambda layer inside the AWS environment to be able to run the lambda functions. This can be done by using AWS Cloud9 for example as an IDE for installimng the necessary packages on the server. Requirements can be found in the requirements.txt file.
+
 

@@ -12,10 +12,10 @@ def lambda_handler(event, context):
     s3_client = boto3.client('s3')
     # s3_bucket_name='electriccars21'
     s3_bucket_name = 'measuringpoints'
-    s3 = boto3.resource('s3',
-                        aws_access_key_id='ASIARB6VMN3JD6ZCZ4EE',
-                        aws_secret_access_key='j9Iv+R9tbl/7YIIWi3y5bq9jAfv1775tvsx8ERgr',
-                        aws_session_token='FwoGZXIvYXdzEEEaDEzvdRLdrORfO3MXZyK4AfSf7rabfISrNNFWZi0K7AMVz8GF/Oaf2z81Xo41YJLfn5DudUJS5TXmU7CHNWybaK0ItQKgSCbLIxTNq6gI8sWvmeGk62sjKvHtpwxY3wi0z2ImM/dJBNcHB3Vi780CfSIHH6UJd1EjQ8rwiFeD9CTQzntHuACpU//a7q06x1thwbqNFkDsis9Pbt1VbzGhHse18VQx1hHTDfdawlzy7NAaszWyl/loV2iv4o9enQjUKHEfOJ+a5FIo3szLnAYyLV8juKquCF6vXJBsbOQ76Y2yXcMOnmpiKHpXbNc2qVIpy3kqzkxErzAahXyVYQ==')
+       s3 = boto3.resource('s3',
+                        aws_access_key_id= creds.aws_access_key_id,
+                        aws_secret_access_key= creds.aws_secret_access_key,
+                        aws_session_token= creds.aws_session_token)
 
     #""" Getting data files from the AWS S3 bucket as denoted above and printing the first 10 file names having prefix "2019/7/8" """
     my_bucket = s3.Bucket(s3_bucket_name)
