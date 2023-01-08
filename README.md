@@ -41,7 +41,10 @@ This folder contains all the jupyter notebooks which where used to explore the d
 
 ## SQL scripts
 
-.
+This folder contains the SQL statements for answering the business questions. With this statements view tables are generated inside the RDS and can be accessed directly with tableau.
 
 ## References
 
+## Final project report
+
+Conatins the final report as pdf
