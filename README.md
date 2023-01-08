@@ -45,6 +45,6 @@ This folder contains the SQL statements for answering the business questions. Wi
 
 ## How to run this repository
 
-The lambda functions run entirely an AWS account. If you wan't to run this code and run the data pipelines copy it into a own lambda function inside your AWS environment. You need to set up an lambda layer inside the AWS environment. Requirements can be found in the txt file.
+The lambda functions run entirely on an AWS account. If you wan't to run this code and run the data pipelines copy it into your own lambda function inside your AWS environment. You need to set up an lambda layer inside the AWS environment to be able to run the lambda functions. Requirements can be found in the txt file.
 
 
