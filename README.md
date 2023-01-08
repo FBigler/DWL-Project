@@ -47,4 +47,4 @@ This folder contains the SQL statements for answering the business questions. Wi
 
 ## Final project report
 
-Conatins the final report as pdf
+Contains the final report as pdf.
