@@ -9,6 +9,7 @@ Project of the module "Data Warehouse and Data Lake Systems" within the program 
  
  # Project Description
  
+
  
  # Project Goals
  
@@ -20,7 +21,6 @@ Project of the module "Data Warehouse and Data Lake Systems" within the program 
  1. Lambda functions
  2. Jupyter notebooks
  3. SQL scripts
- 4. References (if available in PDF format)
 
 For detailed information in regard to the files contained in the specific folder, please consult the documentation below.
 
