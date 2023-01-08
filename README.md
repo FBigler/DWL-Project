@@ -9,9 +9,16 @@ Project of the module "Data Warehouse and Data Lake Systems" within the program 
  
  # Project Description
  
+In this semster project, we would like to take a closer look at the current infrastructure and utilization of charging stations in Switzerland. In doing so, we will determine the existing potential for the expansion of further charging stations by canton and regions of Switzerland for a potential charging station provider.
  
  # Project Goals
  
+ Follwoing key questions shall be answered in this work:
+ 
+ * What is the current occupancy rate of the charging stations by canton/region?
+ * How high is the estimated average share of renewable energies in comparison to the estimated energy consumption at charging stations?
+ *	How good is the distribution of charging stations compared to the number of electric cars by canton/region?
+
  
  # Repository Structure
  
@@ -25,6 +32,13 @@ Project of the module "Data Warehouse and Data Lake Systems" within the program 
 For detailed information in regard to the files contained in the specific folder, please consult the documentation below.
 
 ## Lambda functions
+
+├── lambda_functions
+│   ├── xxxx
+│   ├── xxx.py
+│   ├── sxxx.py
+│   ├── xxx.py
+│   └── xxx.py
 
 
 
